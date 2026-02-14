@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Monpu Love ❤️</title>
+
 <style>
 body {
     margin: 0;
@@ -19,6 +20,10 @@ body {
 .container {
     display: none;
     animation: fadeIn 1.5s ease-in-out;
+    width: 100%;
+    padding: 20px;
+    position: relative;
+    z-index: 2;
 }
 
 button {
@@ -31,6 +36,11 @@ button {
     cursor: pointer;
     box-shadow: 0 5px 15px rgba(0,0,0,0.2);
     margin-top: 20px;
+    transition: transform 0.3s ease;
+}
+
+button:hover {
+    transform: scale(1.08);
 }
 
 h1, p {
@@ -53,6 +63,7 @@ h1, p {
     to { opacity: 1; }
 }
 
+/* Floating hearts */
 .heart {
     position: absolute;
     font-size: 20px;
@@ -65,18 +76,72 @@ h1, p {
     50% { opacity: 1; }
     100% { transform: translateY(-10vh); opacity: 0; }
 }
+
+/* Sparkles */
+.sparkle {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    background: white;
+    border-radius: 50%;
+    opacity: 0.8;
+    animation: twinkle 2s infinite alternate;
+}
+
+@keyframes twinkle {
+    from { opacity: 0.2; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1.5); }
+}
+
+/* Romantic Images */
+.love-img {
+    width: 420px;
+    max-width: 95vw;
+    height: auto;
+    margin: 20px auto;
+    display: block;
+    opacity: 0;
+    transform: scale(0.7);
+    transition: all 1.2s ease;
+    border-radius: 20px;
+    box-shadow: 0 0 30px rgba(255,255,255,0.7);
+}
+
+.love-img.show {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Confetti */
+.confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: red;
+    opacity: 0.8;
+    animation: confettiFall 3s linear forwards;
+}
+
+@keyframes confettiFall {
+    from { transform: translateY(-10vh) rotate(0deg); }
+    to { transform: translateY(100vh) rotate(720deg); }
+}
+
+#typedText {
+    font-size: 22px;
+    margin-top: 20px;
+    min-height: 30px;
+}
 </style>
 </head>
 
 <body>
 
-<!-- SCREEN 1 -->
 <div class="container" id="screen1" style="display:block;">
     <h1>Hey Darling ❤️ Happy Valentine’s Day ❤️</h1>
     <button onclick="showKiss()">Do you want a kiss, click here</button>
 </div>
 
-<!-- SCREEN 2 -->
 <div class="container" id="screen2">
     <h1>Here comes your kiss 💋</h1>
     <div class="lip">💋</div>
@@ -84,24 +149,36 @@ h1, p {
     <button id="loveBtn" onclick="showLove()" style="display:none;">See my love for you</button>
 </div>
 
-<!-- SCREEN 3 -->
 <div class="container" id="screen3">
     <h1>You are my forever ❤️</h1>
-    <img src="Orangutan.jpeg" width="150"><br><br>
-    <img src="proposal.gif" width="250"><br><br>
-    <p>
-        From the moment you came into my life,<br>
-        everything became brighter and warmer ❤️<br><br>
-        I love you more than words can ever express.
-    </p>
+
+    <img src="Orangutan.jpeg" class="love-img" id="img1">
+    <img src="proposal.gif" class="love-img" id="img2">
+
+    <div id="typedText"></div>
 </div>
 
 <audio id="bgMusic" loop>
     <source src="music.mp3" type="audio/mpeg">
 </audio>
 
+<audio id="heartbeat">
+    <source src="heartbeat.mp3" type="audio/mpeg">
+</audio>
+
 <script>
 let music = document.getElementById("bgMusic");
+let heartbeat = document.getElementById("heartbeat");
+
+/* Sparkles generator */
+for (let i = 0; i < 40; i++) {
+    let sparkle = document.createElement("div");
+    sparkle.classList.add("sparkle");
+    sparkle.style.top = Math.random() * 100 + "vh";
+    sparkle.style.left = Math.random() * 100 + "vw";
+    sparkle.style.animationDuration = (1 + Math.random() * 2) + "s";
+    document.body.appendChild(sparkle);
+}
 
 function showKiss() {
     document.getElementById("screen1").style.display = "none";
@@ -109,7 +186,6 @@ function showKiss() {
 
     music.play().catch(() => {});
 
-    // floating hearts
     setInterval(() => {
         const heart = document.createElement("div");
         heart.classList.add("heart");
@@ -121,7 +197,6 @@ function showKiss() {
         setTimeout(() => heart.remove(), 4000);
     }, 500);
 
-    // show next button after 5 sec
     setTimeout(() => {
         document.getElementById("loveBtn").style.display = "inline-block";
     }, 5000);
@@ -130,11 +205,47 @@ function showKiss() {
 function showLove() {
     document.getElementById("screen2").style.display = "none";
     document.getElementById("screen3").style.display = "block";
+
+    heartbeat.play().catch(() => {});
+
+    setTimeout(() => {
+        document.getElementById("img1").classList.add("show");
+    }, 800);
+
+    setTimeout(() => {
+        document.getElementById("img2").classList.add("show");
+    }, 2000);
+
+    setTimeout(typeWriter, 2500);
+    setTimeout(startConfetti, 3000);
+}
+
+/* Typing Effect */
+let text = "From the moment you came into my life, everything became brighter and warmer ❤️ I love you more than words can ever express.";
+let i = 0;
+
+function typeWriter() {
+    if (i < text.length) {
+        document.getElementById("typedText").innerHTML += text.charAt(i);
+        i++;
+        setTimeout(typeWriter, 40);
+    }
+}
+
+/* Confetti */
+function startConfetti() {
+    for (let i = 0; i < 60; i++) {
+        let confetti = document.createElement("div");
+        confetti.classList.add("confetti");
+        confetti.style.left = Math.random() * 100 + "vw";
+        confetti.style.backgroundColor = 
+            ["#ff4b6e", "#ffffff", "#ff9a9e", "#ffd700"][Math.floor(Math.random()*4)];
+        document.body.appendChild(confetti);
+
+        setTimeout(() => confetti.remove(), 3000);
+    }
 }
 </script>
 
 </body>
 </html>
-
-
-
