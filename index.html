@@ -31,6 +31,7 @@ body {
     width: 100%;
     padding: 20px;
     position: relative;
+    z-index: 2;
 }
 
 /* Neon */
@@ -44,7 +45,7 @@ body {
         0 0 40px #ff4b6e;
 }
 
-/* Floating Forever Text */
+/* Floating Forever */
 .floating-forever {
     font-size: 35px;
     font-weight: bold;
@@ -67,7 +68,6 @@ body {
     to { transform: translateX(0); opacity:1; }
 }
 
-/* Fade Message */
 .fade-message {
     opacity: 0;
     transition: 2s;
@@ -75,34 +75,19 @@ body {
     font-size: 20px;
 }
 
-.fade-message.show {
-    opacity: 1;
-}
-
-/* Button */
-button {
-    padding: 15px 30px;
-    font-size: 18px;
-    border: none;
-    border-radius: 30px;
-    background: white;
-    color: #ff4b6e;
-    cursor: pointer;
-    margin-top: 20px;
-}
+.fade-message.show { opacity: 1; }
 
 /* Images */
 .love-img {
     width: 420px;
     max-width: 95vw;
-    height: auto;
     margin: 20px auto;
     display: block;
     border-radius: 20px;
     box-shadow: 0 0 30px rgba(255,255,255,0.7);
 }
 
-/* Floating Items */
+/* Floating items */
 .float-item {
     position: absolute;
     animation: floatUp 6s linear infinite;
@@ -113,10 +98,30 @@ button {
     to { transform: translateY(-10vh); opacity:1; }
 }
 
-#typedText {
-    font-size: 22px;
+/* Sparkles */
+.sparkle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle 2s infinite alternate;
+}
+
+@keyframes twinkle {
+    from { opacity: 0.2; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1.5); }
+}
+
+button {
+    padding: 15px 30px;
+    font-size: 18px;
+    border: none;
+    border-radius: 30px;
+    background: white;
+    color: #ff4b6e;
+    cursor: pointer;
     margin-top: 20px;
-    min-height: 40px;
 }
 </style>
 </head>
@@ -126,7 +131,7 @@ button {
 <!-- PASSWORD -->
 <div class="container" id="login" style="display:block;">
     <h1>Enter Secret Code ❤️</h1>
-    <input type="password" id="pass" placeholder="Enter our secret..." style="padding:10px;border-radius:10px;border:none;">
+    <input type="password" id="pass" style="padding:10px;border-radius:10px;border:none;">
     <br>
     <button onclick="checkPass()">Unlock Love</button>
 </div>
@@ -134,12 +139,9 @@ button {
 <!-- PAGE 2 -->
 <div class="container" id="screen2">
     <div class="lip">💋</div>
-
-    <!-- NEW Romantic message added -->
     <div id="kissMessage" class="fade-message">
         This kiss carries all my love straight to your heart ❤️
     </div>
-
     <button id="nextBtn" onclick="goToMain()" style="display:none;">
         Go to Forever
     </button>
@@ -147,35 +149,52 @@ button {
 
 <!-- PAGE 3 -->
 <div class="container" id="main">
-    <div class="floating-forever">You Are My Forever ❤️</div>
+    <div class="floating-forever neon">You Are My Forever ❤️</div>
 
     <img src="Orangutan.jpeg" class="love-img">
     <img src="proposal.gif" class="love-img">
 
-    <!-- NEW Button instead of auto typing -->
     <button id="messageBtn" onclick="revealMessage()">My Message 💌</button>
 
     <div id="typedText"></div>
 </div>
 
+<audio id="bgMusic" loop>
+    <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="heartbeat" loop>
+    <source src="heartbeat.mp3" type="audio/mpeg">
+</audio>
+
 <script>
+let music=document.getElementById("bgMusic");
+let heartbeat=document.getElementById("heartbeat");
+
+/* Sparkles background */
+for(let i=0;i<40;i++){
+    let s=document.createElement("div");
+    s.classList.add("sparkle");
+    s.style.top=Math.random()*100+"vh";
+    s.style.left=Math.random()*100+"vw";
+    document.body.appendChild(s);
+}
 
 function checkPass(){
-    let password = document.getElementById("pass").value;
-    if(password === "forever"){
+    if(document.getElementById("pass").value==="forever"){
         document.getElementById("login").style.display="none";
         document.getElementById("screen2").style.display="block";
+        music.play().catch(()=>{});
 
-        setTimeout(()=>{
+        setTimeout(()=>{ 
             document.getElementById("kissMessage").classList.add("show");
         },1000);
 
         setTimeout(()=>{
             document.getElementById("nextBtn").style.display="inline-block";
         },3000);
-
     } else {
-        alert("Wrong secret 😏 Try again!");
+        alert("Wrong secret 😏");
     }
 }
 
@@ -184,14 +203,15 @@ function goToMain(){
     document.getElementById("main").style.display="block";
 }
 
-/* Typing Message */
+/* Typing */
 let text="From the moment you came into my life, everything became brighter and warmer ❤️ I love you more than words can ever express.";
 let i=0;
 
 function revealMessage(){
     document.getElementById("messageBtn").style.display="none";
+    heartbeat.play().catch(()=>{});
     typeWriter();
-    startFloatingEffects();
+    floatingRomance();
 }
 
 function typeWriter(){
@@ -202,24 +222,22 @@ function typeWriter(){
     }
 }
 
-/* Sparkles + Hearts + Roses */
-function startFloatingEffects(){
+/* Hearts + Roses + Sparkles floating */
+function floatingRomance(){
     setInterval(()=>{
         let item=document.createElement("div");
         item.classList.add("float-item");
 
-        let elements=["✨","❤️","🌹"];
+        let elements=["❤️","🌹","✨"];
         item.innerHTML=elements[Math.floor(Math.random()*3)];
 
         item.style.left=Math.random()*100+"vw";
         item.style.fontSize=(20+Math.random()*30)+"px";
 
         document.body.appendChild(item);
-
         setTimeout(()=>item.remove(),6000);
     },400);
 }
-
 </script>
 
 </body>
