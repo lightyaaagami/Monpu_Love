@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Our Love Universe 💖</title>
+<title>Monpu Love Universe ❤️</title>
 
 <style>
 *{
@@ -21,27 +21,28 @@ display:flex;
 justify-content:center;
 align-items:center;
 text-align:center;
-transition:1s;
 }
 
-/* Galaxy Background */
+/* ===== GALAXY BACKGROUND ===== */
 body::before{
 content:"";
 position:fixed;
 width:100%;
 height:100%;
-background:radial-gradient(circle at 20% 30%,#ff4b6e 0%,transparent 30%),
+background:
+radial-gradient(circle at 20% 30%,#ff4b6e 0%,transparent 30%),
 radial-gradient(circle at 80% 70%,#ff9a9e 0%,transparent 30%),
 black;
 z-index:-1;
-animation:galaxy 8s infinite alternate;
+animation:galaxy 10s infinite alternate;
 }
 
 @keyframes galaxy{
 from{filter:brightness(1);}
-to{filter:brightness(1.4);}
+to{filter:brightness(1.5);}
 }
 
+/* ===== PAGES ===== */
 .page{
 position:absolute;
 width:100%;
@@ -62,22 +63,22 @@ pointer-events:auto;
 }
 
 h1{
+font-size:32px;
 margin-bottom:20px;
-font-size:34px;
 }
 
 input{
-padding:14px;
+padding:12px;
 border:none;
 border-radius:30px;
 text-align:center;
 font-size:16px;
 outline:none;
-box-shadow:0 0 15px #ff4b6e;
+box-shadow:0 0 20px #ff4b6e;
 }
 
 button{
-margin-top:25px;
+margin-top:20px;
 padding:12px 30px;
 border:none;
 border-radius:30px;
@@ -93,51 +94,82 @@ transform:scale(1.1);
 box-shadow:0 0 15px #ff4b6e;
 }
 
-/* Floating kisses */
-.kiss, .rose{
+/* ===== FLOATING KISSES ===== */
+.kiss{
 position:absolute;
 font-size:25px;
-animation:float 8s linear infinite;
+animation:floatUp 8s linear infinite;
 }
 
-@keyframes float{
+@keyframes floatUp{
 0%{transform:translateY(100vh);opacity:1;}
 100%{transform:translateY(-10vh);opacity:0;}
 }
 
+/* ===== MESSAGE ===== */
 .message{
 font-size:22px;
-margin-top:20px;
 white-space:pre-line;
-min-height:120px;
+margin-top:20px;
+}
+
+/* ===== IMAGES ===== */
+.love-img{
+width:400px;
+max-width:90vw;
+border-radius:20px;
+margin:20px auto;
+box-shadow:0 0 30px rgba(255,255,255,0.6);
 }
 </style>
 </head>
 
 <body>
 
-<!-- Background Music -->
-<audio autoplay loop>
-<source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg">
+<!-- ===== YOUR MUSIC FILE ===== -->
+<audio id="bgMusic" loop>
+<source src="music.mp3" type="audio/mpeg">
 </audio>
 
-<!-- PAGE 1 -->
+<!-- ===== PAGE 1 (PASSWORD) ===== -->
 <div class="page active" id="page1">
-<h1>Hey Darling ❤️<br>I Love You ❤️</h1>
+<h1>
+Hey Darling ❤️  
+<br>
+I Love You ❤️
+</h1>
+
 <input type="password" id="code" placeholder="Enter our secret code">
-<button onclick="checkCode()">Unlock My Heart 🔐</button>
+
+<button onclick="unlock()">Unlock My Heart 🔐</button>
 </div>
 
-<!-- PAGE 2 -->
+<!-- ===== PAGE 2 (KISS PAGE) ===== -->
 <div class="page" id="page2">
 <h1>Muahhhh 💋</h1>
-<div class="message" id="typing"></div>
+
+<div class="message">
+You are my peace 🌸  
+
+You are my heartbeat 💓  
+
+You are my safe place 🏡  
+
+And I am completely yours ❤️
+</div>
+
 <button onclick="goFinal()">Go To Forever 💞</button>
 </div>
 
-<!-- PAGE 3 -->
+<!-- ===== PAGE 3 (FINAL PAGE WITH YOUR FILES) ===== -->
 <div class="page" id="page3">
-<h1>Will You Stay Mine Forever? 💍</h1>
+
+<h1>Our Forever 💍</h1>
+
+<img src="Orangutan.jpeg" class="love-img">
+
+<img src="proposal.gif" class="love-img">
+
 <div class="message">
 From the first moment I saw you ❤️  
 
@@ -151,22 +183,30 @@ Again.
 And again.  
 Forever. ♾️
 </div>
+
 <button onclick="restart()">Relive Our Love 🔁</button>
+
 </div>
 
 <script>
-const secretCode="monpu"; // Change your code
 
-function checkCode(){
+const secretCode="monpu"; // your code
+
+const music=document.getElementById("bgMusic");
+
+/* ===== UNLOCK ===== */
+function unlock(){
 let entered=document.getElementById("code").value;
+
 if(entered===secretCode){
-heartExplosion();
+
+music.play().catch(()=>{});
+
 switchPage("page1","page2");
-createKisses();
-createRoses();
-typeText();
+startKisses();
+
 }else{
-alert("Wrong code 😜 Try again!");
+alert("Wrong code 😜");
 }
 }
 
@@ -183,66 +223,21 @@ function restart(){
 location.reload();
 }
 
-/* Floating kisses */
-function createKisses(){
-for(let i=0;i<20;i++){
+/* ===== FLOATING KISSES ENGINE ===== */
+function startKisses(){
+setInterval(()=>{
 let kiss=document.createElement("div");
 kiss.classList.add("kiss");
 kiss.innerHTML="💋";
 kiss.style.left=Math.random()*100+"vw";
 kiss.style.animationDuration=(4+Math.random()*4)+"s";
 document.body.appendChild(kiss);
-}
+
+setTimeout(()=>kiss.remove(),8000);
+
+},500);
 }
 
-/* Rose petals */
-function createRoses(){
-for(let i=0;i<15;i++){
-let rose=document.createElement("div");
-rose.classList.add("rose");
-rose.innerHTML="🌹";
-rose.style.left=Math.random()*100+"vw";
-rose.style.animationDuration=(5+Math.random()*5)+"s";
-document.body.appendChild(rose);
-}
-}
-
-/* Typing effect */
-function typeText(){
-let text=`You are my peace 🌸
-
-You are my chaos 🔥
-
-You are my safe place 🏡
-
-You are my forever ❤️`;
-let i=0;
-let speed=60;
-function typing(){
-if(i<text.length){
-document.getElementById("typing").innerHTML+=text.charAt(i);
-i++;
-setTimeout(typing,speed);
-}
-}
-typing();
-}
-
-/* Heart explosion */
-function heartExplosion(){
-for(let i=0;i<30;i++){
-let heart=document.createElement("div");
-heart.innerHTML="❤️";
-heart.style.position="absolute";
-heart.style.left="50%";
-heart.style.top="50%";
-heart.style.fontSize="20px";
-heart.style.transform=`translate(${Math.random()*400-200}px,${Math.random()*400-200}px)`;
-heart.style.transition="1s";
-document.body.appendChild(heart);
-setTimeout(()=>heart.remove(),1000);
-}
-}
 </script>
 
 </body>
